@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enviar posts</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Nuevo Post</h1>
+
+      <main>
+        <form @submit.prevent="sendPost"> <!-- ← Importante -->
+          <fieldset>
+            <legend>Title</legend>
+            <input type="text" v-model="title" required />
+          </fieldset>
+
+          <fieldset>
+            <legend>Body</legend>
+            <input type="text" v-model="body" required />
+          </fieldset>
+
+          <button type="submit" :disabled="loading">
+            {{ loading ? "Enviando..." : "Enviar" }}
+          </button>
+        </form>
+      </main>
+
+      <div v-if="response">
+        <h2>Respuesta de la API:</h2>
+        <pre>{{ response }}</pre>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <script>
+      const { ref } = Vue;
+
+      const app = {
+        setup() {
+          const title = ref("");
+          const body = ref("");
+          const loading = ref(false);
+          const error = ref(null);
+          const response = ref(null); // guardará la respuesta del POST
+
+          async function sendPost() {
+            loading.value = true;
+            error.value = null;
+            response.value = null;
+
+            // datos del formulario
+            const data = {
+              title: title.value,
+              body: body.value,
+            };
+
+            try {
+              const res = await fetch("https://jsonplaceholder.typicode.com/posts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+              });
+
+              if (!res.ok) throw new Error("Error HTTP: " + res.status);
+
+              const json = await res.json();
+              response.value = json; // guardamos respuesta
+              console.log("Success:", json);
+            } catch (err) {
+              console.error("Error:", err);
+              error.value = "Error al enviar el post.";
+            } finally {
+              loading.value = false;
+            }
+          }
+
+          return { title, body, loading, error, response, sendPost };
+        },
+      };
+
+      Vue.createApp(app).mount("#app"); // ← Montado corregido
+    </script>
+  </body>
+</html>
