@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 5</title>
+    <style>
+        .rojo {
+            background-color: red;
+        }
+        .verde {
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>Gimnasio</h1>
+
+        <input type="text" v-model="nuevoEjercicio" @keyup.enter="agregar">
+        <button @click="agregar">Agregar</button>
+
+        <ul>
+            <li v-for="(ejercicio, index) in deporte" 
+                :key="index" 
+                :class="ejercicio.completado ? 'verde' : 'rojo'">
+                <!--Le asigno una clase si es true se vuelve verde
+                    El index es la posicion del elemento del array 
+                -->
+
+                {{ ejercicio.nombre }}
+
+                <button @click="marcarCompleto(index)">OK</button>
+                <button @click="eliminar(index)">X</button>
+
+            </li>
+        </ul>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const app = {
+            data() {
+                return {
+                    nuevoEjercicio: "",
+                    deporte: [] 
+                }
+            },
+
+            mounted() {
+                // Cargar datos guardados
+                const datos = localStorage.getItem("deportes");
+                if (datos) {
+                    this.deporte = JSON.parse(datos);
+                }
+            },
+
+            methods: {
+                guardarLocal() { //Envia el json de deporte para añadirlo al localStorage
+                    localStorage.setItem("deportes", JSON.stringify(this.deporte));
+                },
+
+                agregar() {
+                    if (this.nuevoEjercicio.trim() === "") return;
+
+                    this.deporte.push({
+                        nombre: this.nuevoEjercicio,
+                        completado: false
+                    });
+
+                    this.guardarLocal();
+                    this.nuevoEjercicio = "";
+                },
+
+                marcarCompleto(index) { //Envio la pasicion del elemento y lo asigno a true
+                    this.deporte[index].completado = true;
+                    this.guardarLocal();
+                },
+
+                eliminar(index) {
+                    this.deporte.splice(index, 1);
+                    this.guardarLocal();
+                }
+            }
+        };
+
+        Vue.createApp(app).mount("#app");
+    </script>
+
+</body>
+</html>

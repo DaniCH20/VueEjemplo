@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contador Vue</title>
+</head>
+<body>
+  <div id="app">
+    <h1>Contador</h1>
+
+    <div>
+      <h2>Contador: {{ contador }}</h2>
+
+      <button @click="alternarPausa">
+        {{ pausado ? "Reanudar" : "Pausar" }}
+      </button>
+    </div>
+
+  </div>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <script>
+    const { ref, onMounted, onBeforeUnmount } = Vue;
+
+    const app = {
+      setup() {
+        const contador = ref(0);
+        const pausado = ref(false);
+        const intervalo = ref(null);
+
+        function iniciarContador() {
+          intervalo.value = setInterval(() => {
+            if (!pausado.value) contador.value++;
+          }, 1000);
+        }
+
+        function limpiarContador() {
+          if (intervalo.value) {
+            clearInterval(intervalo.value);
+            intervalo.value = null;
+          }
+        }
+
+        function alternarPausa() {
+          pausado.value = !pausado.value;
+        }
+
+        console.log("Componente creado");
+
+        onMounted(() => {
+          console.log("Componente montado");
+          iniciarContador();
+        });
+
+        onBeforeUnmount(() => {
+          console.log("Antes de desmontar");
+          limpiarContador();
+        });
+
+        return {
+          contador,
+          pausado,
+          alternarPausa
+        };
+      }
+    };
+
+    Vue.createApp(app).mount("#app");
+  </script>
+</body>
+</html>

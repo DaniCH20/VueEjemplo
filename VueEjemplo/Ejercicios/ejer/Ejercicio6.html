@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Incidencias - Vue</title>
+</head>
+<body>
+  <main id="app">
+    <h1>Gestión de Incidencias</h1>
+
+    
+
+    <!-- Formulario -->
+    <form @submit.prevent="agregarIncidencia">
+      <label>
+        Título:
+        <input type="text" v-model="nombre" required />
+      </label>
+      <br />
+
+      <label>
+        Aula:
+        <input type="text" v-model="aula" required />
+      </label>
+      <br />
+      <button type="submit">Agregar incidencia</button>
+    </form>
+
+    <h2>Lista de Incidencias</h2>
+
+    <ul>
+      <li v-for="(item, index) in incidenciasFiltradas" :key="index">
+        <strong>{{ item.nombre }}</strong> — Aula: {{ item.aula }}  
+        — Estado: <b>{{ item.estado }}</b>
+
+        <!-- Botones por estado -->
+        <span v-if="item.estado === 'pendiente'">
+          <button @click="actualizarEstado(index, 'proceso')">Iniciar</button>
+        </span>
+
+        <span v-else-if="item.estado === 'proceso'">
+          <button @click="actualizarEstado(index, 'resuelta')">Resolver</button>
+        </span>
+
+      </li>
+    </ul>
+    <!-- Filtros -->
+    <div>
+      <button @click="filtro = 'todas'">Todas</button>
+      <button @click="filtro = 'pendiente'">Pendientes</button>
+      <button @click="filtro = 'proceso'">En Proceso</button>
+      <button @click="filtro = 'resuelta'">Resueltas</button>
+    </div>
+
+    <h3>Incidencias activas: {{ totalActivas }}</h3>
+  </main>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="js/main1.js"></script>
+</body>
+</html>

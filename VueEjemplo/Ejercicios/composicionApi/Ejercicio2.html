@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contador Vue</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Contador</h1>
+      <main>
+        <div>
+          <form @submit.prevent="handleSubmit">
+            <fieldset>
+              <legend>Nombre</legend>
+
+              <input type="text" name="nombre " v-model="nombre" required />
+            </fieldset>
+            <fieldset>
+              <legend>Email</legend>
+
+              <input type="text" name="email " v-model="email" required />
+            </fieldset>
+            <fieldset>
+              <legend>Contraseña</legend>
+              <input type="password" name="pass " v-model="pass" required />
+            </fieldset>
+            <fieldset>
+              <legend>Rol</legend>
+              <select name="rol" v-model="rol">
+                <option value="persona">Persona</option>
+                <option value="perro">Perro</option>
+                <option value="gato">Gato</option>
+                <option value="raton">Raton</option>
+              </select>
+            </fieldset>
+            <fieldset>
+              <legend>Radio</legend>
+              <label>
+                <input type="radio" name="genero" value="m" v-model="genero" />
+                Masculino
+              </label>
+              <label>
+                <input type="radio" name="genero" value="f" v-model="genero" />
+                Femenino
+              </label>
+              <label>
+                <input type="radio" name="genero" value="x" v-model="genero" />
+                Prefiero no decirlo
+              </label>
+            </fieldset>
+            <fieldset>
+              <legend>Condiciones</legend>
+              <label>
+                <input type="checkbox" v-model="aceptaCondiciones" /> Acepto
+                condiciones
+              </label>
+              <div v-if="!aceptaCondiciones" style="color: #b45309">
+                <small>Debes aceptar las condiciones</small>
+              </div>
+            </fieldset>
+
+            <button type="submit">Enviar</button>
+          </form>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="main1.js"></script>
+  </body>
+</html>

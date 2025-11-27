@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .sin-stock {
+           visibility: hidden
+        }
+        .con-stock {
+           visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h2>******{{ mensaje}}******</h2>
+        <input type="text" v-model="nuevaFruta" placeholder="Nueva fruta" v-on:click="agregar">
+        <button v-on:click="agregar">Agregar</button>
+       
+    
+        <div style="margin: 20px 0;">
+            <label>Establecer stock mínimo: {{minimoValor}}</label>
+            <input type="range" min="0" max="100" v-model="minimoValor">
+            <span>Mínimo: {{minimoValor}}</span>
+        </div>
+
+        <ul>
+            <li v-for="fruta in frutasFiltradas" 
+                :class="fruta.cantidad < minimoValor ? 'sin-stock' : 'con-stock'">
+                <input type="number" v-model="fruta.cantidad" style="width: 50px;">
+                {{fruta.nombre}} -
+                <button @click="fruta.cantidad++">+</button>
+                <button @click="fruta.cantidad > 0 ? fruta.cantidad-- : 0">-</button>
+                <small>
+                    {{fruta.cantidad}} 
+                    <span v-if="fruta.cantidad < minimoValor">- POR DEBAJO DEL MÍNIMO</span>
+                </small>
+            </li>
+        </ul>
+        <h3>Total frutas: {{ calculoTotal }}</h3>
+        <div>
+            <input type="text" v-model="buscarFruta" placeholder="Fruta"  v-on:keyup="buscar">
+        
+            <br>
+            <ul>
+            <li v-for="fruta in frutasEncon">
+                {{fruta.nombre}} 
+            </li>
+        </ul>
+        </div>
+    </div>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const app={
+            data(){
+                return{
+                    mensaje:'Control de Stock de Frutas',
+                    frutas:[
+                        { cantidad: 10, nombre: 'manzana' },
+                        { cantidad: 0, nombre: 'pera' },
+                        { cantidad: 5, nombre: 'platano' }
+                    ],
+                    nuevaFruta : '',
+                    minimoValor: 3,
+                    frutasEncon:[]
+                }
+            },
+            methods:{
+                agregar(){
+                    if(!this.nuevaFruta.trim()) return;
+                    
+                    let encontrado = false;
+                    for(let fruta of this.frutas){
+                         if(this.nuevaFruta.toLowerCase() === fruta.nombre.toLowerCase()){
+                            fruta.cantidad++;
+                            encontrado = true;
+                            break;
+                         }
+                    }
+                    if(!encontrado){
+                        this.frutas.push({
+                            nombre: this.nuevaFruta, 
+                            cantidad: 1
+                        });
+                    }
+                    this.nuevaFruta = '';
+                },
+                buscar(){
+                    if(!this.buscarFruta.trim()) return;
+                    this.frutasEncon = this.frutas.filter(fruta => fruta.nombre.includes(this.buscarFruta));
+                }
+            },
+            computed:{
+                calculoTotal(){
+                    return this.frutas.reduce((total, fruta) => total + fruta.cantidad, 0);
+                },
+                frutasFiltradas(){
+                    return this.frutas;
+                },
+                frutasBajoMinimo(){
+                    return this.frutas.filter(fruta => fruta.cantidad < this.minimoValor).length;
+                }
+            }
+        }
+        Vue.createApp(app).mount('#app')
+    </script>
+</body>
+</html>
