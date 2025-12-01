@@ -1,15 +1,17 @@
 <script setup>
-import { ref } from 'vue'
-
-defineProps({
-  msg: String,
-})
+import { RouterLink } from 'vue-router'
 
 </script>
 
 <template>
-  <h1>{{ msg }}</h1>
-  
+  <h1>Esto es HelloWorld</h1>
+
+<RouterLink to="/">Ir a Home</RouterLink> | 
+<RouterLink to="/peliculas">Ir a Peliculas</RouterLink> |
+<RouterLink to="/about">Ir a About</RouterLink>
+
+<RouterView />
+
 </template>
 
 <style scoped>
