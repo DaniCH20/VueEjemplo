@@ -1,36 +1,58 @@
 <script setup>
 import { RouterLink } from "vue-router";
+import { useFavoritos } from "@/stores/favoritos";
+import { storeToRefs } from "pinia";
+const peliculaData = ref(null);
 
 const props = defineProps({
   pelicula: {
     type: Object,
     required: true,
   },
+  detalle: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+const store = useFavoritos();
+const loading = ref(false);
+const error = ref(null);
+
+// Desestructuración reactiva del estado y getters
+const { peliculas } = storeToRefs(store);
+
+// Desestructuración de acciones
+const { increment } = store;
 </script>
 
 <template>
-  <nav class="movie-card">
-    <div v-if="peliculaData==true">
-      <div class="pelicula-card">
+  <div class="movie-card">
+    <!-- 🎬 MODO DETALLE -->
+    <template v-if="detalle">
+      <div class="content">
+        <h2>{{ pelicula.nombre }}</h2>
+
         <p><strong>ID:</strong> {{ pelicula.id }}</p>
-        <p><strong>Nombre:</strong> {{ pelicula.nombre }}</p>
         <p><strong>Director:</strong> {{ pelicula.director }}</p>
         <p><strong>Año:</strong> {{ pelicula.year }}</p>
-        <p><strong>Genero:</strong> {{ pelicula.genero }}</p>
-      </div>
+        <p><strong>Género:</strong> {{ pelicula.genero }}</p>
+        <p><strong>Sinopsis:</strong> {{ pelicula.sipnosis }}</p>
 
-      <router-link to="/peliculas">← Volver al listado</router-link>
-      <RouterLink class="btn-fav" to="/favoritos">Favoritos </RouterLink>
-    </div>
-    <div v-else>
-      <div class="movie-title">
-        {{ pelicula.nombre }}
+        <div class="actions">
+          <RouterLink class="btn home" to="/peliculas">Volver</RouterLink>
+           <button @click="increment(pelicula)">Favoritos</button>
+        </div>
       </div>
+    </template>
 
-      <div class="movie-actions">
+    <!-- 🎞️ MODO CATÁLOGO -->
+    <template v-else>
+      <div class="content">
+        <h2>{{ pelicula.nombre }}</h2>
+
         <RouterLink
-          class="btn-details"
+          class="btn details"
           :to="{
             name: 'pelicula',
             params: { id: pelicula.id },
@@ -40,85 +62,61 @@ const props = defineProps({
           Ver Detalles
         </RouterLink>
       </div>
-    </div>
-  </nav>
+    </template>
+  </div>
 </template>
 
 <style scoped>
 .movie-card {
-  width: 100%;
   background: #1b1b1b;
   border: 1px solid #333;
-  padding: 1rem 1.5rem;
+  padding: 1rem;
   border-radius: 12px;
+  margin-bottom: 1rem;
+  color: white;
+}
 
+.content {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.movie-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 15px rgba(255, 80, 80, 0.4);
-}
-
-.movie-title {
-  font-size: 1.4rem;
-  font-weight: bold;
-  color: #ffdfdf;
-  text-shadow: 0 0 5px rgba(255, 150, 150, 0.4);
-}
-
-.movie-actions {
+.actions {
   display: flex;
-  align-items: center;
-  gap: 0.8rem;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 
-/* Botones */
-.movie-actions a {
+.btn {
   padding: 0.4rem 0.8rem;
   border-radius: 8px;
+  font-weight: bold;
   text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-
-  transition: background 0.25s, transform 0.2s;
+  transition: 0.2s;
 }
 
-/* Botón Detalles */
-.btn-details {
+.details {
   background: #ff6b6b;
   color: white;
 }
-
-.btn-details:hover {
+.details:hover {
   background: #ff8787;
-  transform: scale(1.05);
 }
 
-/* Favoritos */
-.btn-fav {
+.fav {
   background: #ffd93d;
   color: #222;
 }
-
-.btn-fav:hover {
+.fav:hover {
   background: #ffe05c;
-  transform: scale(1.05);
 }
 
-/* Home */
-.btn-home {
+.home {
   background: #4d96ff;
   color: white;
 }
-
-.btn-home:hover {
+.home:hover {
   background: #75b3ff;
-  transform: scale(1.05);
 }
 </style>
